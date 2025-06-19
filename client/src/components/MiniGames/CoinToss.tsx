@@ -49,7 +49,7 @@ export default function CoinToss({ onGameResult }: CoinTossProps) {
       const winAmount = won ? betAmount * 2 : 0;
 
       if (won) {
-        setBalance(prev => prev + winAmount);
+        setBalance(balance - betAmount + winAmount);
         showToast(`${finalSide.toUpperCase()}! You won ₹${winAmount}!`, "success");
       } else {
         showToast(`${finalSide.toUpperCase()}! Better luck next time!`, "error");

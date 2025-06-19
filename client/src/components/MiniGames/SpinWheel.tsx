@@ -63,7 +63,7 @@ export default function SpinWheel({ onGameResult }: SpinWheelProps) {
       const winAmount = won ? betAmount * multiplier : 0;
 
       if (won) {
-        setBalance(prev => prev + winAmount);
+        setBalance(balance - betAmount + winAmount);
         showToast(`${resultColor.toUpperCase()} wins! You won ₹${winAmount}!`, "success");
       } else {
         showToast(`${resultColor.toUpperCase()} wins. Better luck next time!`, "error");

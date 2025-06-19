@@ -90,7 +90,7 @@ export default function ColorTrading() {
       const totalWin = winningBets.reduce((sum, bet) => sum + (bet.amount * colorOdds[bet.color]), 0);
       
       if (totalWin > 0) {
-        setBalance(prev => prev + totalWin);
+        setBalance(balance + totalWin);
         showToast(`You won ₹${totalWin.toFixed(2)}!`, "success");
       } else {
         showToast("Better luck next time!", "error");

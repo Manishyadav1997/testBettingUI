@@ -50,7 +50,7 @@ export default function DiceGame({ onGameResult }: DiceGameProps) {
       const winAmount = won ? betAmount * 6 : 0;
 
       if (won) {
-        setBalance(prev => prev + winAmount);
+        setBalance(balance - betAmount + winAmount);
         showToast(`You won ₹${winAmount}!`, "success");
       } else {
         showToast(`Dice rolled ${finalValue}. Better luck next time!`, "error");

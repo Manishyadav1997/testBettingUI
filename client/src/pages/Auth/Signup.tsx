@@ -151,7 +151,7 @@ export default function Signup() {
                 <Checkbox
                   id="terms"
                   checked={agreedToTerms}
-                  onCheckedChange={setAgreedToTerms}
+                  onCheckedChange={(checked: boolean) => setAgreedToTerms(checked)}
                   className="border-gray-600"
                 />
                 <Label htmlFor="terms" className="text-sm text-gray-400">
