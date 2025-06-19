@@ -1,37 +1,56 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { fileURLToPath } from 'url';
+import type { PluginOption } from 'vite';
 
-export default defineConfig({
-  plugins: [
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Only import dev plugins in development
+const devPlugins: Promise<PluginOption>[] = [];
+
+if (process.env.NODE_ENV !== 'production') {
+  // Using dynamic import to avoid top-level await
+  const runtimeErrorOverlay = import("@replit/vite-plugin-runtime-error-modal")
+    .then(module => module.default());
+  devPlugins.push(runtimeErrorOverlay);
+  
+  if (process.env.REPL_ID) {
+    const cartographer = import("@replit/vite-plugin-cartographer")
+      .then(module => module.cartographer());
+    devPlugins.push(cartographer);
+  }
+}
+
+export default defineConfig(async () => {
+  const plugins = [
     react(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+    ...(await Promise.all(devPlugins))
+  ];
+
+  return {
+    base: process.env.NODE_ENV === 'production' ? '/' : '/',
+    plugins,
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "client", "src"),
+        "@shared": path.resolve(__dirname, "shared"),
+        "@assets": path.resolve(__dirname, "attached_assets"),
+      },
     },
-  },
-  root: path.resolve(import.meta.dirname, "client"),
-  build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
-    emptyOutDir: true,
-  },
-  server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
+    root: path.resolve(__dirname, "client"),
+    build: {
+      outDir: path.resolve(__dirname, "dist/client"),
+      emptyOutDir: true,
+      sourcemap: true,
     },
-  },
+    server: {
+      port: 3000,
+      strictPort: true,
+      fs: {
+        strict: true,
+        deny: ["**/.*"],
+      },
+    },
+  };
 });

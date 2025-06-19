@@ -1,6 +1,11 @@
 import express, { type Request, Response, NextFunction } from "express";
+import path from "path";
+import { fileURLToPath } from 'url';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
@@ -47,13 +52,17 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
+  // Handle static files and client-side routing
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    serveStatic(app);
+    // Serve static files from the client build
+    app.use(express.static(path.join(__dirname, '../../dist/client'), { index: false }));
+    
+    // Handle client-side routing - return index.html for all non-API routes
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../../dist/client/index.html'));
+    });
   }
 
   // ALWAYS serve the app on port 5000
