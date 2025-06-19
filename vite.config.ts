@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -6,31 +6,27 @@ import type { PluginOption } from 'vite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Only import dev plugins in development
-const devPlugins: Promise<PluginOption>[] = [];
-
-if (process.env.NODE_ENV !== 'production') {
-  // Using dynamic import to avoid top-level await
-  const runtimeErrorOverlay = import("@replit/vite-plugin-runtime-error-modal")
-    .then(module => module.default());
-  devPlugins.push(runtimeErrorOverlay);
+export default defineConfig(({ mode }) => {
+  // Load environment variables based on the current mode
+  const env = loadEnv(mode, process.cwd(), '');
   
-  if (process.env.REPL_ID) {
-    const cartographer = import("@replit/vite-plugin-cartographer")
-      .then(module => module.cartographer());
-    devPlugins.push(cartographer);
+  // Only import dev plugins in development
+  const devPlugins: PluginOption[] = [];
+  
+  if (mode === 'development') {
+    // Using dynamic import to avoid top-level await
+    import("@replit/vite-plugin-runtime-error-modal")
+      .then(module => devPlugins.push(module.default()));
+    
+    if (env.REPL_ID) {
+      import("@replit/vite-plugin-cartographer")
+        .then(module => devPlugins.push(module.cartographer()));
+    }
   }
-}
-
-export default defineConfig(async () => {
-  const plugins = [
-    react(),
-    ...(await Promise.all(devPlugins))
-  ];
 
   return {
-    base: process.env.NODE_ENV === 'production' ? '/' : '/',
-    plugins,
+    plugins: [react(), ...devPlugins],
+    base: '/',
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "client", "src"),
