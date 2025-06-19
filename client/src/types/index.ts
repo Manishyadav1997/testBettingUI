@@ -23,6 +23,10 @@ export interface AviatorGameState {
   timeElapsed: number;
   crashed: boolean;
   nextRoundIn: number;
+  crashPoint?: number;
+  startTime?: number;
+  speed?: number;
+  finalMultiplier?: number;
   activePlayers: {
     username: string;
     bet: number;
