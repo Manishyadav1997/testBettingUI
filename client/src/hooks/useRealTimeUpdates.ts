@@ -10,6 +10,9 @@ export function useRealTimeUpdates() {
     timeElapsed: 0,
     crashed: false,
     nextRoundIn: 45,
+    crashPoint: 2.0, // Default value
+    startTime: Date.now(),
+    speed: 1.0,
     activePlayers: [],
   });
   const [colorGameState, setColorGameState] = useState<ColorGameState>({
@@ -34,7 +37,7 @@ export function useRealTimeUpdates() {
 
   // Update aviator multiplier
   const updateAviator = useCallback(() => {
-    setAviatorState(prev => {
+    setAviatorState((prev: AviatorGameState) => {
       // Handle countdown between rounds
       if (!prev.isActive && prev.nextRoundIn > 0) {
         return { ...prev, nextRoundIn: prev.nextRoundIn - 1 };
@@ -42,9 +45,9 @@ export function useRealTimeUpdates() {
   
       // Start new round
       if (!prev.isActive && prev.nextRoundIn <= 0) {
-        // Generate crash point using realistic distribution
-        // Most crashes happen between 1.0x - 5.0x, with rare high multipliers
         const crashPoint = generateCrashPoint();
+        const startTime = Date.now();
+        const speed = Math.random() * 0.3 + 0.7; // Variable speed between 0.7-1.0
         
         return {
           ...prev,
@@ -53,38 +56,37 @@ export function useRealTimeUpdates() {
           timeElapsed: 0,
           crashed: false,
           nextRoundIn: 0,
-          crashPoint, // Store the predetermined crash point
-          startTime: Date.now(),
-          speed: Math.random() * 0.3 + 0.7, // Variable speed between 0.7-1.0
+          crashPoint,
+          startTime,
+          speed,
+          finalMultiplier: undefined,
         };
       }
   
       // Game is running
-      if (prev.isActive && !prev.crashed) {
+      if (prev.isActive && !prev.crashed && prev.startTime !== undefined && prev.speed !== undefined && prev.crashPoint !== undefined) {
         const currentTime = Date.now();
-        const actualTimeElapsed = (currentTime - prev.startTime) / 1000; // Convert to seconds
+        const actualTimeElapsed = (currentTime - prev.startTime) / 1000;
         
-        // Calculate multiplier with realistic growth curve
-        // Uses exponential growth that accelerates over time
-        const baseGrowth = 0.1 * prev.speed; // Base growth rate affected by speed
-        const accelerationFactor = Math.pow(actualTimeElapsed / 5, 1.2); // Acceleration over time
+        const baseGrowth = 0.1 * prev.speed;
+        const accelerationFactor = Math.pow(actualTimeElapsed / 5, 1.2);
         const newMultiplier = 1.0 + (actualTimeElapsed * baseGrowth * (1 + accelerationFactor));
         
-        // Check if we've reached the crash point
         if (newMultiplier >= prev.crashPoint) {
           return {
             ...prev,
             multiplier: prev.crashPoint,
             crashed: true,
             isActive: false,
-            nextRoundIn: Math.floor(Math.random() * 20) + 30, // 3-5 second wait
+            nextRoundIn: Math.floor(Math.random() * 20) + 30,
             finalMultiplier: prev.crashPoint,
+            timeElapsed: actualTimeElapsed,
           };
         }
   
         return {
           ...prev,
-          multiplier: Math.min(newMultiplier, prev.crashPoint - 0.01), // Never exceed crash point
+          multiplier: Math.min(newMultiplier, prev.crashPoint - 0.01),
           timeElapsed: actualTimeElapsed,
         };
       }
