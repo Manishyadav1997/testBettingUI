@@ -1,0 +1,130 @@
+🔧 Prompt Title:
+
+Build a Fully Functional and Testable Frontend UI for a Web-Based Betting Platform
+
+🧾 Prompt:
+
+You are a skilled frontend developer or AI engineer tasked with building the complete, fully functional, and testable UI of a web-based betting application. This application should look premium, be mobile-responsive, and allow live interaction for the following betting games and modules:
+
+🔮 Project Overview:
+Create a visually appealing and production-grade UI for a web betting platform that includes the following modules:
+
+🏏 Cricket Betting
+✈️ Aviator Game
+🎨 Color Trading
+🎲 Mini-Games (Dice, Spin, Coin Toss)
+The UI must be fully functional, interactive, responsive, and testable, with no broken elements or missing navigation. All user flows should be clickable and simulate real behavior using mocked data.
+
+🧑‍💻 Tech Requirements:
+Framework: React.js or Next.js
+Styling: Tailwind CSS (preferred) or Styled Components
+Routing: React Router / Next.js routing
+State Management: React Context / Redux Toolkit
+Animations: Framer Motion for smooth UI
+Real-Time Mocking: Use Socket.IO or dummy setInterval for real-time game behavior
+📱 Page List & UI Requirements:
+🔐 Authentication:
+
+Login (Email/Phone/OTP-based)
+Signup
+Forgot Password
+Responsive, animated forms
+🏠 Home Screen:
+
+Featured Games (Cricket, Aviator, Color Game)
+Horizontal sliders for trending bets
+Balance widget, notifications, banners
+🧾 Betting UI:
+
+✅ Cricket Betting:
+Match cards (live/upcoming)
+Dynamic odds component (click to add to bet slip)
+Live score section (mocked real-time)
+Bet types selector (tabs: Winner, Toss, Runs, etc.)
+Bet slip modal with stake input, total odds, estimated win
+✈️ Aviator:
+Real-time animated plane (CSS/Canvas-based)
+Cashout button
+Live multiplier animation
+Active players list
+Countdown timer for next round
+🎨 Color Trading:
+Betting cards: Red, Green, Violet
+Real-time countdown & result display
+Bet amount input
+Previous results history (colored circles)
+Result animation (optional)
+👤 User Dashboard:
+
+Balance & wallet
+Bet history (filter by game/date/status)
+Active bets
+Referral code section
+Bonuses and promotions
+💼 Wallet Section:
+
+Add Funds (Mock Razorpay/UPI popup)
+Withdraw Funds (Mock KYC prompt)
+Transaction history
+Wallet switch (Main, Bonus)
+🎁 Bonuses & Offers Page:
+
+Daily login reward component
+Referral earnings
+Claimable bonuses with CTA buttons
+📜 Bet Slip Component:
+
+Floating Bet Slip (bottom right)
+Dynamic odds update
+Confirm bet modal
+Stake input
+Estimated winnings calculation
+⚙️ Settings Page:
+
+Profile edit
+Security settings (2FA toggle)
+Language switcher
+Dark mode toggle
+📊 Leaderboard & Analytics:
+
+Aviator top winners list
+Color Game leaderboard
+Live players online count (mocked)
+🔐 Admin Panel (UI Only – Optional):**
+
+Match manager (CRUD for matches)
+Odds setter
+Player manager
+Manual result entry
+✅ UI Behaviors to Implement:
+Real-time updates using dummy data (e.g. setInterval)
+Form validation for inputs
+Loading states, skeletons for each screen
+Toast notifications (success/error/info)
+Mobile-friendly layout (responsive grid/flexbox)
+Sticky footer navigation (mobile)
+Keyboard-friendly bet slip form
+Smooth transitions (Framer Motion, CSS)
+🧪 Testing Instructions:
+You must test and simulate the following:
+
+Place bet flow on each game
+Navigating across tabs/pages
+Wallet transaction flow (mock)
+Responsive behavior on mobile/tablet/desktop
+State persistence using localStorage for bet slip
+📦 Deliverables:
+✅ Fully working frontend codebase (React or Next.js)
+✅ Screens simulated with dummy/mock data (no backend required)
+✅ Live testable version (e.g., Netlify/Vercel)
+✅ README with run instructions
+✅ Assets and component structure clearly organized
+✅ Option to easily integrate real API endpoints
+📌 Bonus Features (Optional but impressive):
+Progressive Web App (PWA) support
+Theme toggling (Dark/Light)
+Chatbox component in Aviator
+Interactive sound effects and feedback
+Notification bell with updates
+🔚 Final Note:
+This should be a fully usable frontend UI mimicking the behavior of a real betting app. Every button should perform an action (even if mocked), and the UI should feel complete and professional.
