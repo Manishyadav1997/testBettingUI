@@ -36,8 +36,8 @@ export default defineConfig(({ mode }) => {
       }),
       ...devPlugins
     ],
-    base: isProduction ? './' : '/',
-    publicDir: 'client/public',
+    base: isProduction ? '/testBettingUI/' : '/',
+    publicDir: 'public',
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "client", "src"),
