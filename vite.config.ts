@@ -9,11 +9,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig(({ mode }) => {
   // Load environment variables based on the current mode
   const env = loadEnv(mode, process.cwd(), '');
+  const isProduction = mode === 'production';
   
   // Only import dev plugins in development
   const devPlugins: PluginOption[] = [];
   
-  if (mode === 'development') {
+  if (!isProduction) {
     // Using dynamic import to avoid top-level await
     import("@replit/vite-plugin-runtime-error-modal")
       .then(module => devPlugins.push(module.default()));
@@ -25,8 +26,18 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    plugins: [react(), ...devPlugins],
-    base: '/',
+    plugins: [
+      react({
+        // Only apply Emotion in development if we need it
+        jsxImportSource: mode === 'development' ? '@emotion/react' : undefined,
+        babel: {
+          plugins: mode === 'development' ? ['@emotion/babel-plugin'] : [],
+        },
+      }),
+      ...devPlugins
+    ],
+    base: isProduction ? './' : '/',
+    publicDir: 'client/public',
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "client", "src"),
@@ -36,9 +47,17 @@ export default defineConfig(({ mode }) => {
     },
     root: path.resolve(__dirname, "client"),
     build: {
-      outDir: path.resolve(__dirname, "dist/client"),
+      outDir: path.resolve(__dirname, "dist"),
       emptyOutDir: true,
-      sourcemap: true,
+      sourcemap: isProduction ? false : true,
+      minify: isProduction ? 'esbuild' : false,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            react: ['react', 'react-dom', 'react-router-dom'],
+          },
+        },
+      },
     },
     server: {
       port: 3000,
@@ -47,6 +66,10 @@ export default defineConfig(({ mode }) => {
         strict: true,
         deny: ["**/.*"],
       },
+    },
+    preview: {
+      port: 3000,
+      strictPort: true,
     },
   };
 });
