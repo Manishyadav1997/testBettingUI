@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
       }),
       ...devPlugins
     ],
-    base: isProduction ? '/testBettingUI/' : '/',
+    base: './', // Use relative path for production
     publicDir: 'public',
     resolve: {
       alias: {
@@ -48,6 +48,7 @@ export default defineConfig(({ mode }) => {
     root: path.resolve(__dirname, "client"),
     build: {
       outDir: path.resolve(__dirname, "dist"),
+      assetsDir: './', // Ensure assets are in the root of dist
       emptyOutDir: true,
       sourcemap: isProduction ? false : true,
       minify: isProduction ? 'esbuild' : false,

@@ -1,11 +1,26 @@
 import express, { type Request, Response, NextFunction } from "express";
 import path from "path";
 import { fileURLToPath } from 'url';
+import { createServer } from 'http';
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { setupVite } from "./vite";
+import { WebSocketServer } from 'ws';
+import fs from 'fs/promises';
+import { nanoid } from 'nanoid';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Simple logger
+function log(message: string, context = 'express') {
+  const timestamp = new Date().toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
+  console.log(`${timestamp} [${context}] ${message}`);
+}
 
 const app = express();
 app.use(express.json());
@@ -56,13 +71,46 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
-    // Serve static files from the client build
-    app.use(express.static(path.join(__dirname, '../../dist/client'), { index: false }));
+    // In production, serve static files from the dist directory
+    const distPath = path.resolve(process.cwd(), 'dist');
+    log(`Serving static files from: ${distPath}`);
     
-    // Handle client-side routing - return index.html for all non-API routes
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../../dist/client/index.html'));
-    });
+    try {
+      // Log the files in the dist directory for debugging
+      const files = await fs.readdir(distPath);
+      log(`Files in dist directory: ${files.join(', ')}`);
+      
+      // Serve static files
+      app.use(express.static(distPath, {
+        index: 'index.html',
+        maxAge: '1y',
+        etag: true,
+        lastModified: true,
+        setHeaders: (res, filePath) => {
+          if (filePath.endsWith('.html')) {
+            // Disable caching for HTML files
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+          }
+        },
+      }));
+      
+      // Handle client-side routing - return index.html for all non-API routes
+      app.get('*', (req, res) => {
+        log(`Serving index.html for route: ${req.path}`);
+        res.sendFile(path.join(distPath, 'index.html'), (err) => {
+          if (err) {
+            log(`Error serving index.html: ${err.message}`, 'error');
+            res.status(500).send('Error loading the application');
+          }
+        });
+      });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      log(`Error setting up static file serving: ${errorMessage}`, 'error');
+      process.exit(1);
+    }
   }
 
   // Serve the app on port 3000 for development

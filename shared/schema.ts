@@ -2,6 +2,11 @@ import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb } fr
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Define types for better type inference
+type UserInsert = typeof users.$inferInsert;
+type BetInsert = typeof bets.$inferInsert;
+type MatchInsert = typeof matches.$inferInsert;
+
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -44,24 +49,25 @@ export const transactions = pgTable("transactions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  email: true,
-  password: true,
-  phone: true,
+// Define schemas with explicit types
+export const insertUserSchema = z.object({
+  username: z.string().min(3),
+  email: z.string().email(),
+  password: z.string().min(6),
+  phone: z.string().optional().nullable(),
 });
 
-export const insertBetSchema = createInsertSchema(bets).pick({
-  gameType: true,
-  betType: true,
-  amount: true,
-  odds: true,
+export const insertBetSchema = z.object({
+  gameType: z.string(),
+  betType: z.string(),
+  amount: z.string(),
+  odds: z.string().optional().nullable(),
 });
 
-export const insertMatchSchema = createInsertSchema(matches).pick({
-  team1: true,
-  team2: true,
-  startTime: true,
+export const insertMatchSchema = z.object({
+  team1: z.string(),
+  team2: z.string(),
+  startTime: z.string().nullable(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
