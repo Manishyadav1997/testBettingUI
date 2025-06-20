@@ -4,7 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page Not Found</title>
+  <base href="/testBettingUI/" />
   <script>
+    // Handle GitHub Pages base path
+    (function() {
+      const base = '/testBettingUI';
+      const path = window.location.pathname;
+      
+      // If we're not already at the base path, redirect to it
+      if (path.startsWith(base + '/') || path === base) {
+        // Already at the correct path, let the SPA handle routing
+        return;
+      }
+
+      // Redirect to the base path with the current path
+      const newPath = base + (path.startsWith('/') ? '' : '/') + path;
+      window.history.replaceState({}, '', newPath);
+    })();
+
     // Single Page Apps for GitHub Pages
     // MIT License
     // https://github.com/rafgraph/spa-github-pages
@@ -17,11 +34,11 @@
             l.pathname.slice(0, -1) + decoded + l.hash
         );
       }
-    }(window.location))
+    }(window.location));
   </script>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module" src="/testBettingUI/src/main.tsx"></script>
+  <div id="root">Redirecting...</div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

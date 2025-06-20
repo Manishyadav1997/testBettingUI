@@ -3,13 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <script type="module" crossorigin src="./index-Bp_H_5zb.js"></script>
-    <link rel="modulepreload" crossorigin href="./react-Bjg8ufjx.js">
-    <link rel="stylesheet" crossorigin href="./index-CqDGhVgD.css">
+    <base href="/testBettingUI/" />
+    <script type="text/javascript">
+      // Handle GitHub Pages base path
+      (function() {
+        const base = '/testBettingUI';
+        if (window.location.pathname.startsWith(base + '/') || window.location.pathname === base) {
+          return;
+        }
+        
+        // Redirect to the base path if not already there
+        const newPath = base + window.location.pathname;
+        window.history.replaceState({}, '', newPath);
+      })();
+    </script>
+    <script type="module" crossorigin src="/testBettingUI/index-mYFPSqnB.js"></script>
+    <link rel="modulepreload" crossorigin href="/testBettingUI/react-Bjg8ufjx.js">
+    <link rel="stylesheet" crossorigin href="/testBettingUI/index-CqDGhVgD.css">
   </head>
   <body>
     <div id="root"></div>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+    
+    <!-- Fallback for GitHub Pages 404.html -->
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      (function(history) {
+        var pushState = history.pushState;
+        history.pushState = function(state) {
+          if (typeof history.onpushstate == "function") {
+            history.onpushstate({state: state});
+          }
+          return pushState.apply(history, arguments);
+        };
+      })(window.history);
+    </script>
   </body>
 </html>

@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
       }),
       ...devPlugins
     ],
-    base: './', // Use relative path for production
+    base: process.env.NODE_ENV === 'production' ? '/testBettingUI/' : '/',
     publicDir: 'public',
     resolve: {
       alias: {

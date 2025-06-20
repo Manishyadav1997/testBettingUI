@@ -73,6 +73,7 @@ app.use((req, res, next) => {
   } else {
     // In production, serve static files from the dist directory
     const distPath = path.resolve(process.cwd(), 'dist');
+    const basePath = '/testBettingUI';
     log(`Serving static files from: ${distPath}`);
     
     try {
@@ -80,9 +81,12 @@ app.use((req, res, next) => {
       const files = await fs.readdir(distPath);
       log(`Files in dist directory: ${files.join(', ')}`);
       
-      // Serve static files
-      app.use(express.static(distPath, {
-        index: 'index.html',
+      // Create a router for the base path
+      const router = express.Router();
+      
+      // Serve static files with proper base path handling
+      router.use(express.static(distPath, {
+        index: false, // Disable automatic index.html serving
         maxAge: '1y',
         etag: true,
         lastModified: true,
@@ -96,8 +100,13 @@ app.use((req, res, next) => {
         },
       }));
       
-      // Handle client-side routing - return index.html for all non-API routes
-      app.get('*', (req, res) => {
+      // Serve index.html for the root path and any other non-API routes
+      router.get(['/', '/*'], (req, res, next) => {
+        // Skip API routes
+        if (req.path.startsWith('/api')) {
+          return next();
+        }
+        
         log(`Serving index.html for route: ${req.path}`);
         res.sendFile(path.join(distPath, 'index.html'), (err) => {
           if (err) {
@@ -106,6 +115,17 @@ app.use((req, res, next) => {
           }
         });
       });
+      
+      // Mount the router at the base path
+      app.use(basePath, router);
+      
+      // Also serve at the root for local development
+      if (process.env.NODE_ENV !== 'production') {
+        app.use(express.static(distPath));
+        app.get('*', (req, res) => {
+          res.sendFile(path.join(distPath, 'index.html'));
+        });
+      }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       log(`Error setting up static file serving: ${errorMessage}`, 'error');

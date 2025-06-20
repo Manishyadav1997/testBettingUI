@@ -1,8 +1,9 @@
-import { Link, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { Bell, User, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useApp } from "@/contexts/AppContext";
+import { Link } from "@/App";
 
 export default function Navbar() {
   const [location] = useLocation();
@@ -16,28 +17,32 @@ export default function Navbar() {
     { href: "/mini-games", label: "Mini Games" },
   ];
 
+  // Helper function to check if a link is active
+  const isActive = (href: string) => {
+    const currentPath = location.replace(/^\/testBettingUI/, '');
+    return currentPath === href || (href !== '/' && currentPath.startsWith(href));
+  };
+
   return (
     <nav className="bg-secondary-dark border-b border-gray-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
-            <Link href="/">
-              <div className="text-2xl font-bold text-accent-green cursor-pointer">
-                BetPro
-              </div>
+            <Link to="/" className="text-2xl font-bold text-accent-green cursor-pointer">
+              BetPro
             </Link>
             <div className="hidden md:flex space-x-6">
               {navLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  <a
-                    className={`transition-colors ${
-                      location === link.href
-                        ? "text-accent-green"
-                        : "text-gray-300 hover:text-accent-green"
-                    }`}
-                  >
-                    {link.label}
-                  </a>
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={`transition-colors ${
+                    isActive(link.href)
+                      ? "text-accent-green"
+                      : "text-gray-300 hover:text-accent-green"
+                  }`}
+                >
+                  {link.label}
                 </Link>
               ))}
             </div>
@@ -51,7 +56,7 @@ export default function Navbar() {
               </span>
             </div>
             
-            <Link href="/wallet">
+            <Link to="/wallet" className="block">
               <Button className="gradient-accent text-primary-dark hover:opacity-90">
                 <Wallet className="w-4 h-4 mr-2" />
                 Deposit
@@ -68,7 +73,7 @@ export default function Navbar() {
               </Badge>
             </button>
 
-            <Link href="/dashboard">
+            <Link to="/dashboard" className="block">
               <div className="w-8 h-8 bg-accent-green rounded-full flex items-center justify-center cursor-pointer hover:opacity-80">
                 <User className="w-4 h-4 text-primary-dark" />
               </div>
