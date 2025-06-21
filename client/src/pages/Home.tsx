@@ -179,23 +179,26 @@ export default function Home() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex space-x-3">
+                  <div className="flex flex-wrap gap-2">
                     <Button 
                       variant="secondary"
-                      className="bg-secondary-dark hover:bg-gray-600 text-sm"
+                      className="bg-secondary-dark hover:bg-gray-600 text-sm flex-1 min-w-[120px]"
                       onClick={() => handleAddBet("cricket", "match_winner", `${match.team1} Win`, match.odds.team1Win, `${match.team1} vs ${match.team2}`)}
                     >
                       {match.team1.split(" ")[0]} Win <span className="text-accent-green ml-1">{match.odds.team1Win.toFixed(2)}</span>
                     </Button>
                     <Button 
                       variant="secondary"
-                      className="bg-secondary-dark hover:bg-gray-600 text-sm"
+                      className="bg-secondary-dark hover:bg-gray-600 text-sm flex-1 min-w-[120px]"
                       onClick={() => handleAddBet("cricket", "match_winner", `${match.team2} Win`, match.odds.team2Win, `${match.team1} vs ${match.team2}`)}
                     >
                       {match.team2.split(" ")[0]} Win <span className="text-accent-green ml-1">{match.odds.team2Win.toFixed(2)}</span>
                     </Button>
-                    <Link href="/cricket">
-                      <Button className="gradient-accent text-primary-dark text-sm font-medium hover:opacity-90">
+                    <Link 
+                      href="/cricket" 
+                      className="flex-1 min-w-[120px]"
+                    >
+                      <Button className="gradient-accent text-primary-dark text-sm font-medium hover:opacity-90 w-full">
                         More Bets
                       </Button>
                     </Link>
