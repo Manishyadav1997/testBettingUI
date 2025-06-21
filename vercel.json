@@ -17,6 +17,11 @@
     },
     {
       "src": "/(.*)",
+      "dest": "/dist/client/$1",
+      "continue": true
+    },
+    {
+      "src": "/(.*)",
       "dest": "/dist/client/index.html"
     }
   ]

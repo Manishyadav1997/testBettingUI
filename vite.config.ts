@@ -25,19 +25,43 @@ export default defineConfig(({ mode }) => {
     }
   }
 
+  const isProd = process.env.NODE_ENV === 'production';
+  const base = isProd ? '/testBettingUI' : '';
+
+  const plugins: PluginOption[] = [
+    react({
+      // Only apply Emotion in development if we need it
+      jsxImportSource: mode === 'development' ? '@emotion/react' : undefined,
+      babel: {
+        plugins: mode === 'development' ? ['@emotion/babel-plugin'] : [],
+      },
+    }),
+    ...devPlugins
+  ];
+
+  // Add HTML base tag injection in production
+  if (isProd) {
+    plugins.push({
+      name: 'html-inject-base',
+      transformIndexHtml(html: string) {
+        return html.replace(
+          /<head>/,
+          `<head>\n    <base href="${base}">`
+        );
+      },
+    });
+  }
+
   return {
-    plugins: [
-      react({
-        // Only apply Emotion in development if we need it
-        jsxImportSource: mode === 'development' ? '@emotion/react' : undefined,
-        babel: {
-          plugins: mode === 'development' ? ['@emotion/babel-plugin'] : [],
-        },
-      }),
-      ...devPlugins
-    ],
-    base: process.env.NODE_ENV === 'production' ? '/testBettingUI/' : '/',
+    plugins,
+    // Base URL for GitHub Pages deployment
+    base,
+    // Ensure public directory is properly set
     publicDir: 'public',
+    // Ensure proper handling of environment variables
+    define: {
+      'import.meta.env.BASE_URL': JSON.stringify(base),
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "client", "src"),
@@ -48,14 +72,17 @@ export default defineConfig(({ mode }) => {
     root: path.resolve(__dirname, "client"),
     build: {
       outDir: path.resolve(__dirname, "dist"),
-      assetsDir: './', // Ensure assets are in the root of dist
+      sourcemap: !isProd,
+      minify: isProd ? 'esbuild' : false,
+      assetsDir: 'assets',
       emptyOutDir: true,
-      sourcemap: isProduction ? false : true,
-      minify: isProduction ? 'esbuild' : false,
       rollupOptions: {
         output: {
+          entryFileNames: 'assets/[name]-[hash].js',
+          chunkFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash][extname]',
           manualChunks: {
-            react: ['react', 'react-dom', 'react-router-dom'],
+            vendor: ['react', 'react-dom', 'react-router-dom'],
           },
         },
       },
@@ -63,14 +90,19 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       strictPort: true,
+      historyApiFallback: {
+        index: base,
+        disableDotRule: true,
+      },
       fs: {
         strict: true,
-        deny: ["**/.*"],
+        allow: ['..'],
       },
     },
     preview: {
       port: 3000,
       strictPort: true,
+      historyApiFallback: true,
     },
   };
 });

@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter, useLocation } from 'wouter';
+import { Switch, Route, Router as WouterRouter } from 'wouter';
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,24 +27,34 @@ import Navbar from "@/components/Layout/Navbar";
 import MobileNav from "@/components/Layout/MobileNav";
 import BetSlip from "@/components/BetSlip/BetSlip";
 
+// Re-export navigation utilities for use in other components
+export { default as useNavigation } from './utils/navigation';
+
 // Create a custom Link component that handles the base path
-const Link = ({ to, children, ...props }: { to: string; children: React.ReactNode; [key: string]: any }) => {
+export const Link = ({ to, children, ...props }: { to: string; children: React.ReactNode; [key: string]: any }) => {
   const { createPath } = useNavigation();
+  const href = to.startsWith('http') ? to : createPath(to);
   return (
-    <a href={createPath(to)} {...props}>
+    <a href={href} {...props}>
       {children}
     </a>
   );
 };
 
-// Export the Link component and useNavigation hook for use in other components
-export { Link, useNavigation };
+// Custom router that handles base path properly
+const BaseRouter = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <WouterRouter base={BASE_PATH}>
+      {children}
+    </WouterRouter>
+  );
+};
 
 function Router() {
   return (
     <div className="min-h-screen bg-primary-dark">
       <Navbar />
-      <WouterRouter base={BASE_PATH}>
+      <BaseRouter>
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/login" component={Login} />
@@ -60,7 +70,7 @@ function Router() {
           <Route path="/leaderboard" component={Leaderboard} />
           <Route component={NotFound} />
         </Switch>
-      </WouterRouter>
+      </BaseRouter>
       <MobileNav />
       <BetSlip />
       <Toaster />

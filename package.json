@@ -9,6 +9,7 @@
     "build:client": "vite build",
     "build:server": "npx tsc && npx esbuild server/index.ts --platform=node --packages=external --format=esm --outdir=dist --bundle --minify --sourcemap",
     "start": "NODE_ENV=production node dist/index.js",
+    "preview": "vite preview --port=3000",
     "check": "npx tsc",
     "db:push": "drizzle-kit push",
     "vercel-build": "npm install && npm run build",

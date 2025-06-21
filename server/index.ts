@@ -100,10 +100,20 @@ app.use((req, res, next) => {
         },
       }));
       
-      // Serve index.html for the root path and any other non-API routes
-      router.get(['/', '/*'], (req, res, next) => {
-        // Skip API routes
-        if (req.path.startsWith('/api')) {
+      // Handle all other routes by serving index.html for client-side routing
+      router.get('*', (req, res, next) => {
+        // Skip API routes and static files
+        if (req.path.startsWith('/api') || 
+            req.path.startsWith('/assets/') || 
+            req.path.endsWith('.js') || 
+            req.path.endsWith('.css') ||
+            req.path.endsWith('.json') ||
+            req.path.endsWith('.ico') ||
+            req.path.endsWith('.png') ||
+            req.path.endsWith('.jpg') ||
+            req.path.endsWith('.jpeg') ||
+            req.path.endsWith('.svg') ||
+            req.path.endsWith('.webp')) {
           return next();
         }
         

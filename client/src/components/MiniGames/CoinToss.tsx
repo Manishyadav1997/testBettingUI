@@ -93,36 +93,36 @@ export default function CoinToss({ onGameResult }: CoinTossProps) {
         {/* Side Selection */}
         <div>
           <label className="text-sm text-gray-400 mb-3 block">Choose your side:</label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 w-full">
             <Button
               variant={selectedSide === "heads" ? "default" : "outline"}
-              className={`py-3 ${
+              className={`min-h-[80px] w-full px-2 ${
                 selectedSide === "heads" 
-                  ? "bg-accent-green text-primary-dark" 
+                  ? "bg-accent-green text-primary-dark hover:bg-accent-green/90" 
                   : "border-gray-600 text-white hover:bg-secondary-dark"
               }`}
               onClick={() => setSelectedSide("heads")}
               disabled={isFlipping}
             >
-              <div className="text-center">
-                <div className="text-2xl mb-1">H</div>
-                <div className="text-sm">Heads</div>
+              <div className="flex flex-col items-center justify-center w-full">
+                <div className="text-2xl font-medium leading-none">H</div>
+                <div className="text-sm font-normal mt-1">Heads</div>
               </div>
             </Button>
             
             <Button
               variant={selectedSide === "tails" ? "default" : "outline"}
-              className={`py-3 ${
+              className={`min-h-[80px] w-full px-2 ${
                 selectedSide === "tails" 
-                  ? "bg-accent-green text-primary-dark" 
+                  ? "bg-accent-green text-primary-dark hover:bg-accent-green/90" 
                   : "border-gray-600 text-white hover:bg-secondary-dark"
               }`}
               onClick={() => setSelectedSide("tails")}
               disabled={isFlipping}
             >
-              <div className="text-center">
-                <div className="text-2xl mb-1">T</div>
-                <div className="text-sm">Tails</div>
+              <div className="flex flex-col items-center justify-center w-full">
+                <div className="text-2xl font-medium leading-none">T</div>
+                <div className="text-sm font-normal mt-1">Tails</div>
               </div>
             </Button>
           </div>
