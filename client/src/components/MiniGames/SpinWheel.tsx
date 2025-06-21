@@ -409,7 +409,7 @@ export default function SpinWheel({ onGameResult }: SpinWheelProps) {
               <div className="relative">
                 {/* Wheel */}
                 <div
-                  className="w-80 h-80 rounded-full border-8 border-yellow-500 shadow-2xl relative overflow-hidden"
+                  className="w-[68vw] h-[68vw] max-w-[20rem] max-h-[20rem] sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full border-8 border-yellow-500 shadow-2xl relative overflow-hidden"
                   style={{
                     transform: `rotate(${wheelRotation}deg)`,
                     transition: isSpinning ? "transform 4s cubic-bezier(0.4, 0, 0.2, 1)" : "none"
@@ -433,7 +433,7 @@ export default function SpinWheel({ onGameResult }: SpinWheelProps) {
                       >
                         {/* Number text */}
                         <div
-                          className="absolute text-white font-bold text-sm flex items-center justify-center w-6 h-6"
+                          className="absolute text-white font-bold text-xs sm:text-sm flex items-center justify-center w-4 h-4 sm:w-6 sm:h-6"
                           style={{
                             left: `${50 + 35 * Math.cos((angle + 360/wheelNumbers.length/2 - 90) * Math.PI / 180)}%`,
                             top: `${50 + 35 * Math.sin((angle + 360/wheelNumbers.length/2 - 90) * Math.PI / 180)}%`,
