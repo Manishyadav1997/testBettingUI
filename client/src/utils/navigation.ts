@@ -1,7 +1,11 @@
 import { useLocation } from 'wouter';
 
 // Base path for GitHub Pages
-export const BASE_PATH = (import.meta.env.BASE_URL || '').replace(/\/+$/, '');
+// Ensure we have a consistent base path for GitHub Pages deployment
+export const BASE_PATH = '/testBettingUI';
+
+// For local development, you can comment out the line above and uncomment this:
+// export const BASE_PATH = (import.meta.env.BASE_URL || '').replace(/\/+$/, '');
 
 // Helper function to create paths with the base path
 export const createPath = (path: string) => {

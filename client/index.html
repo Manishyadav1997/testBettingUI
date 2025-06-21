@@ -3,39 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Betting UI Platform" />
+    <title>Betting UI Platform</title>
     <base href="/testBettingUI/" />
     <script type="text/javascript">
-      // Handle GitHub Pages base path
+      // Single Page App for GitHub Pages
+      // MIT License
+      // Modified from https://github.com/rafgraph/spa-github-pages
       (function() {
-        const base = '/testBettingUI';
-        if (window.location.pathname.startsWith(base + '/') || window.location.pathname === base) {
-          return;
-        }
+        // This script handles GitHub Pages SPA routing
+        const repo = '/testBettingUI';
         
-        // Redirect to the base path if not already there
-        const newPath = base + window.location.pathname;
-        window.history.replaceState({}, '', newPath);
+        // Parse query parameters to handle SPA routing
+        const parseQuery = function() {
+          const q = window.location.search.substring(1);
+          if (q.length === 0) return {};
+          
+          // Handle the special case for SPA routing where search starts with '/'
+          if (q.startsWith('/')) {
+            const path = q.substring(1).split('&')[0].replace(/~and~/g, '&');
+            window.history.replaceState(null, null, repo + '/' + path + window.location.hash);
+            return {};
+          }
+          
+          return q.split('&').reduce((params, param) => {
+            const [key, value] = param.split('=');
+            params[key] = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : '';
+            return params;
+          }, {});
+        };
+        
+        // Execute the query parsing
+        parseQuery();
       })();
     </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
-    
-    <!-- Fallback for GitHub Pages 404.html -->
-    <script type="text/javascript">
-      // Single Page Apps for GitHub Pages
-      (function(history) {
-        var pushState = history.pushState;
-        history.pushState = function(state) {
-          if (typeof history.onpushstate == "function") {
-            history.onpushstate({state: state});
-          }
-          return pushState.apply(history, arguments);
-        };
-      })(window.history);
-    </script>
   </body>
 </html>

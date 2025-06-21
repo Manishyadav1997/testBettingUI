@@ -6,12 +6,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -32,8 +31,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build client
         run: npm run build:client
+        env:
+          NODE_ENV: production
+
+      # Create 404.html that redirects to index.html for SPA routing
+      - name: Setup 404 page for SPA routing
+        run: |
+          cp dist/index.html dist/404.html
+          echo "<!-- This file was automatically generated to support SPA routing on GitHub Pages -->" >> dist/404.html
+
+      # Create .nojekyll file to bypass Jekyll processing
+      - name: Create .nojekyll file
+        run: touch dist/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

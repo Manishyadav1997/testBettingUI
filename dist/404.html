@@ -6,39 +6,49 @@
   <title>Page Not Found</title>
   <base href="/testBettingUI/" />
   <script>
-    // Handle GitHub Pages base path
+    // Single Page App for GitHub Pages
+    // MIT License
+    // Modified from https://github.com/rafgraph/spa-github-pages
     (function() {
-      const base = '/testBettingUI';
-      const path = window.location.pathname;
+      // This works for GitHub Pages with a custom domain or with the default github.io domain
+      const pathSegmentsToKeep = 1; // Keep the first segment (testBettingUI)
+      const repo = '/testBettingUI';
+
+      // Get the current URL path
+      let l = window.location;
       
-      // If we're not already at the base path, redirect to it
-      if (path.startsWith(base + '/') || path === base) {
-        // Already at the correct path, let the SPA handle routing
+      // If we're already at the correct base path, let the SPA handle routing
+      if (l.pathname.startsWith(repo + '/') || l.pathname === repo) {
         return;
       }
 
-      // Redirect to the base path with the current path
-      const newPath = base + (path.startsWith('/') ? '' : '/') + path;
-      window.history.replaceState({}, '', newPath);
-    })();
-
-    // Single Page Apps for GitHub Pages
-    // MIT License
-    // https://github.com/rafgraph/spa-github-pages
-    (function(l) {
-      if (l.search[1] === '/' ) {
-        var decoded = l.search.slice(1).split('&').map(function(s) { 
-          return s.replace(/~and~/g, '&')
-        }).join('?');
-        window.history.replaceState(null, null,
-            l.pathname.slice(0, -1) + decoded + l.hash
-        );
+      // If we're at a path that doesn't include the repo name, redirect to include it
+      if (!l.pathname.startsWith(repo)) {
+        // Redirect to the repo base path with the current path appended
+        const newPath = repo + (l.pathname.startsWith('/') ? '' : '/') + l.pathname;
+        window.location.replace(newPath);
+        return;
       }
-    }(window.location));
+
+      // Handle SPA routing by redirecting to index.html with the path in a query parameter
+      // This is needed for deep linking in the SPA
+      const segmentCount = l.pathname.split('/').length;
+      const redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash;
+
+      window.location.replace(redirectUrl);
+    })();
   </script>
 </head>
 <body>
-  <div id="root">Redirecting...</div>
-  <script type="module" src="/src/main.tsx"></script>
+  <div id="root">
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      <h1 style="margin-bottom: 1rem;">Redirecting...</h1>
+      <p>If you are not redirected automatically, <a href="/testBettingUI/">click here</a>.</p>
+    </div>
+  </div>
 </body>
 </html>

@@ -25,8 +25,11 @@ export default defineConfig(({ mode }) => {
     }
   }
 
-  const isProd = process.env.NODE_ENV === 'production';
-  const base = isProd ? '/testBettingUI' : '';
+  // Always use the GitHub Pages base path for consistency
+  const base = '/testBettingUI';
+  // For local development without the base path, you can uncomment this:
+  // const isProd = process.env.NODE_ENV === 'production';
+  // const base = isProd ? '/testBettingUI' : '';
 
   const plugins: PluginOption[] = [
     react({
@@ -39,18 +42,20 @@ export default defineConfig(({ mode }) => {
     ...devPlugins
   ];
 
-  // Add HTML base tag injection in production
-  if (isProd) {
-    plugins.push({
-      name: 'html-inject-base',
-      transformIndexHtml(html: string) {
+  // Always add HTML base tag injection for GitHub Pages
+  plugins.push({
+    name: 'html-inject-base',
+    transformIndexHtml(html: string) {
+      // Only inject if not already present
+      if (!html.includes('<base href=')) {
         return html.replace(
           /<head>/,
-          `<head>\n    <base href="${base}">`
+          `<head>\n    <base href="${base}/">`
         );
-      },
-    });
-  }
+      }
+      return html;
+    },
+  });
 
   return {
     plugins,
@@ -72,8 +77,8 @@ export default defineConfig(({ mode }) => {
     root: path.resolve(__dirname, "client"),
     build: {
       outDir: path.resolve(__dirname, "dist"),
-      sourcemap: !isProd,
-      minify: isProd ? 'esbuild' : false,
+      sourcemap: !isProduction,
+      minify: isProduction ? 'esbuild' : false,
       assetsDir: 'assets',
       emptyOutDir: true,
       rollupOptions: {
