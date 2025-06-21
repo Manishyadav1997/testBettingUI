@@ -248,25 +248,33 @@ export function CardDraw({ onGameResult }: { onGameResult: (result: { game: stri
             </div>
             
             {/* Drawn Cards */}
-            <div className="relative w-20 h-28 md:w-24 md:h-32">
+            <div className="relative w-16 h-24 sm:w-20 sm:h-28 md:w-24 md:h-32">
               <AnimatePresence>
                 {drawnCards.length > 0 && (
                   <motion.div
                     key={drawnCards[0].value + drawnCards[0].suit}
-                    initial={{ opacity: 0, x: -50, rotate: -10 }}
+                    initial={{ opacity: 0, x: -40, rotate: -8 }}
                     animate={{ opacity: 1, x: 0, rotate: 0 }}
-                    exit={{ opacity: 0, x: 50, rotate: 10 }}
-                    className={`absolute w-full h-full ${getCardBg(drawnCards[0].suit)} rounded-lg border-2 ${
+                    exit={{ opacity: 0, x: 40, rotate: 8 }}
+                    className={`relative w-full h-full ${getCardBg(drawnCards[0].suit)} rounded-lg border-2 ${
                       drawnCards[0].color === 'red' ? 'border-red-200' : 'border-gray-200'
-                    } shadow-lg flex flex-col justify-between p-2`}
+                    } shadow-lg p-1`}
                   >
-                    <div className={`text-left text-lg font-bold ${getCardColor(drawnCards[0].color)}`}>
+                    {/* Top-left number */}
+                    <div className={`absolute top-1 left-1 text-sm sm:text-base font-bold ${getCardColor(drawnCards[0].color)}`}>
                       {drawnCards[0].value}
-                      <div className="text-2xl">{drawnCards[0].symbol}</div>
                     </div>
-                    <div className={`text-right text-lg font-bold ${getCardColor(drawnCards[0].color)} transform rotate-180`}>
+                    
+                    {/* Center symbol */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className={`text-4xl sm:text-5xl font-bold ${getCardColor(drawnCards[0].color)}`}>
+                        {drawnCards[0].symbol}
+                      </div>
+                    </div>
+                    
+                    {/* Bottom-right number */}
+                    <div className={`absolute bottom-1 right-1 text-sm sm:text-base font-bold ${getCardColor(drawnCards[0].color)}`}>
                       {drawnCards[0].value}
-                      <div className="text-2xl">{drawnCards[0].symbol}</div>
                     </div>
                   </motion.div>
                 )}
