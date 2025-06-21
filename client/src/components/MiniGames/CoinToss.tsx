@@ -156,6 +156,15 @@ export default function CoinToss({ onGameResult }: CoinTossProps) {
             ))}
           </div>
         </div>
+        {/* Flip Button */}
+        <Button
+          onClick={flipCoin}
+          disabled={isFlipping}
+          className="w-full gradient-accent text-primary-dark font-semibold py-3 hover:opacity-90"
+        >
+          <Coins className="w-4 h-4 mr-2" />
+          {isFlipping ? "Flipping..." : "Flip Coin"}
+        </Button>
 
         {/* Game Info */}
         <div className="bg-secondary-dark rounded-lg p-4 space-y-2">
@@ -176,16 +185,7 @@ export default function CoinToss({ onGameResult }: CoinTossProps) {
             <span className="text-gold font-semibold">2:1 (50%)</span>
           </div>
         </div>
-
-        {/* Flip Button */}
-        <Button
-          onClick={flipCoin}
-          disabled={isFlipping}
-          className="w-full gradient-accent text-primary-dark font-semibold py-3 hover:opacity-90"
-        >
-          <Coins className="w-4 h-4 mr-2" />
-          {isFlipping ? "Flipping..." : "Flip Coin"}
-        </Button>
+        
       </CardContent>
     </Card>
   );

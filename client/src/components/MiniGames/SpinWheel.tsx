@@ -377,11 +377,11 @@ export default function SpinWheel({ onGameResult }: SpinWheelProps) {
         <CardHeader className="text-center pb-4">
           <div className="flex items-center justify-between">
             <div className="flex-1"></div>
-            <CardTitle className="text-white flex items-center justify-center gap-3 text-3xl flex-1">
+            {/* <CardTitle className="text-white flex items-center justify-center gap-3 text-3xl flex-1">
               <Trophy className="w-8 h-8 text-yellow-500" />
               Premium Roulette
               <Zap className="w-8 h-8 text-yellow-500" />
-            </CardTitle>
+            </CardTitle> */}
             <div className="flex-1 flex justify-end">
               <Button
                 onClick={() => setShowInstructions(true)}
@@ -390,7 +390,6 @@ export default function SpinWheel({ onGameResult }: SpinWheelProps) {
                 className="border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
               >
                 <HelpCircle className="w-4 h-4 mr-2" />
-                How to Play
               </Button>
             </div>
           </div>
@@ -496,78 +495,68 @@ export default function SpinWheel({ onGameResult }: SpinWheelProps) {
               </div>
             )}
           </div>
+          {/* Enhanced Spin Button */}
+<Button
+  onClick={spinWheel}
+  disabled={isSpinning}
+  className="w-full gradient-accent text-primary-dark font-semibold py-4 text-lg hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-xl rounded-xl relative overflow-hidden"
+>
+  {isSpinning ? (
+    <div className="flex items-center justify-center gap-2">
+      <RotateCcw className="w-5 h-5 animate-spin" />
+      <span>Spinning...</span>
+    </div>
+  ) : (
+    <div className="flex items-center justify-center gap-2">
+      <Trophy className="w-5 h-5" />
+      <span>Spin to Win</span>
+      <Zap className="w-5 h-5" />
+    </div>
+  )}
 
-          {/* Enhanced Betting Options */}
-          <div>
-            <h3 className="text-xl text-white mb-6 font-bold text-center">Choose Your Strategy</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-              {betOptions.map((option) => (
-                <Button
-                  key={option.id}
-                  variant={selectedBet === option.id ? "default" : "outline"}
-                  className={`${
-                    selectedBet === option.id 
-                      ? "bg-accent-green text-primary-dark border-accent-green scale-105 shadow-lg" 
-                      : `${option.bgColor} ${option.borderColor} text-white hover:bg-opacity-30 hover:scale-105`
-                  } p-4 h-auto flex flex-col items-center space-y-2 transition-all duration-200 relative overflow-hidden`}
-                  onClick={() => setSelectedBet(option.id)}
-                  disabled={isSpinning}
-                >
-                  <div className="text-2xl">{option.icon}</div>
-                  <span className="font-semibold text-center leading-tight">{option.label}</span>
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className={`${option.textColor} font-bold`}>{option.multiplier}x</span>
-                    <span className="text-gray-400">{option.chance}</span>
-                  </div>
-                  {selectedBet === option.id && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
-                  )}
-                </Button>
-              ))}
-            </div>
-          </div>
+  {!isSpinning && (
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] hover:translate-x-[100%] transition-transform duration-1000 pointer-events-none" />
+  )}
+</Button>
 
-          {/* Enhanced Bet Amount Section */}
-          <div className="bg-gradient-to-br from-secondary-dark to-primary-dark rounded-2xl p-6 border-2 border-gray-600 shadow-xl">
-            <label className="text-xl text-white mb-4 block font-bold flex items-center gap-2">
-              💰 Stake Your Bet
-            </label>
-            <div className="space-y-4">
-              <div className="relative">
-                <Input
-                  type="number"
-                  value={betAmount}
-                  onChange={(e) => setBetAmount(Number(e.target.value))}
-                  className="bg-primary-dark border-2 border-gray-500 text-white text-xl p-4 pr-12 rounded-xl focus:border-yellow-500 transition-colors"
-                  min="10"
-                  max={balance}
-                  disabled={isSpinning}
-                  placeholder="Enter amount..."
-                />
-                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">₹</span>
-              </div>
-              
-              <div className="grid grid-cols-4 gap-3">
-                {[100, 250, 500, 1000].map((amount) => (
-                  <Button
-                    key={amount}
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setBetAmount(amount)}
-                    className={`border-2 ${
-                      betAmount === amount 
-                        ? "border-yellow-500 bg-yellow-500/20 text-yellow-400" 
-                        : "border-gray-600 text-white hover:bg-secondary-dark hover:border-gray-500"
-                    } py-3 font-semibold transition-all duration-200`}
-                    disabled={isSpinning || amount > balance}
-                  >
-                    ₹{amount}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
+        {/* Compact Betting Controls */}
+<div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-between items-center bg-gradient-to-br from-secondary-dark to-primary-dark p-4 rounded-xl border border-gray-600 shadow-md mb-4">
 
+{/* Strategy Dropdown */}
+<div className="flex flex-col text-white text-sm gap-1 w-full sm:w-[45%]">
+  <label className="font-semibold">🎯 Strategy</label>
+  <select
+    value={selectedBet}
+    onChange={(e) => setSelectedBet(e.target.value)}
+    className="bg-primary-dark border border-gray-500 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+    disabled={isSpinning}
+  >
+    {betOptions.map((option) => (
+      <option key={option.id} value={option.id}>
+        {option.label} ({option.multiplier}x, {option.chance})
+      </option>
+    ))}
+  </select>
+</div>
+
+{/* Stake Dropdown */}
+<div className="flex flex-col text-white text-sm gap-1 w-full sm:w-[45%]">
+  <label className="font-semibold">💰 Stake</label>
+  <select
+    value={betAmount}
+    onChange={(e) => setBetAmount(Number(e.target.value))}
+    className="bg-primary-dark border border-gray-500 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+    disabled={isSpinning}
+  >
+    {[100, 250, 500, 1000].map((amount) => (
+      <option key={amount} value={amount} disabled={amount > balance}>
+        ₹{amount} {amount > balance ? "(Insufficient balance)" : ""}
+      </option>
+    ))}
+  </select>
+</div>
+
+</div>
           {/* Enhanced Game Statistics */}
           <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-6 border-2 border-gray-600 shadow-xl">
             <h3 className="text-white font-bold text-xl text-center mb-4 flex items-center justify-center gap-2">
@@ -599,29 +588,6 @@ export default function SpinWheel({ onGameResult }: SpinWheelProps) {
               </div>
             </div>
           </div>
-
-          {/* Enhanced Spin Button */}
-          <Button
-            onClick={spinWheel}
-            disabled={isSpinning}
-            className="w-full gradient-accent text-primary-dark font-bold py-8 text-2xl hover:opacity-90 transition-all duration-300 transform hover:scale-105 shadow-2xl rounded-2xl relative overflow-hidden"
-          >
-            {isSpinning ? (
-              <div className="flex items-center justify-center gap-3">
-                <RotateCcw className="w-8 h-8 animate-spin" />
-                <span>Spinning the Wheel...</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-3">
-                <Trophy className="w-8 h-8" />
-                <span>SPIN TO WIN</span>
-                <Zap className="w-8 h-8" />
-              </div>
-            )}
-            {!isSpinning && (
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] hover:translate-x-[100%] transition-transform duration-1000"></div>
-            )}
-          </Button>
         </CardContent>
       </Card>
       {showInstructions && <InstructionsModal />}
