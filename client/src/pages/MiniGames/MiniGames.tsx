@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DiceGame from "@/components/MiniGames/DiceGame";
 import SpinWheel from "@/components/MiniGames/SpinWheel";
 import CoinToss from "@/components/MiniGames/CoinToss";
+import { CardDraw } from '@/components/MiniGames/CardDraw';
 
 export default function MiniGames() {
   const [gameHistory, setGameHistory] = useState([
@@ -15,11 +16,25 @@ export default function MiniGames() {
     { game: "coin", result: { side: "tails" }, won: true, amount: 400, timestamp: Date.now() - 300000 },
   ]);
 
-  const addGameResult = (game: string, result: any, won: boolean, amount: number) => {
-    setGameHistory(prev => [
-      { game, result, won, amount, timestamp: Date.now() },
-      ...prev.slice(0, 9)
-    ]);
+  const addGameResult = (
+    game: string | { game: string; result: any; won: boolean; amount: number },
+    result?: any,
+    won?: boolean,
+    amount?: number
+  ) => {
+    if (typeof game === 'object') {
+      // Handle object parameter (from CardDraw)
+      setGameHistory(prev => [
+        { ...game, timestamp: Date.now() },
+        ...prev.slice(0, 9)
+      ]);
+    } else if (typeof won === 'boolean' && amount !== undefined) {
+      // Handle individual parameters (from other games)
+      setGameHistory(prev => [
+        { game, result, won, amount, timestamp: Date.now() },
+        ...prev.slice(0, 9)
+      ]);
+    }
   };
 
   const gameStats = {
@@ -71,13 +86,7 @@ export default function MiniGames() {
             </TabsContent>
 
             <TabsContent value="card" className="mt-6">
-              <Card className="glass-morphism">
-                <CardContent className="p-8 text-center">
-                  <Spade className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Card Draw</h3>
-                  <p className="text-gray-400">Coming Soon!</p>
-                </CardContent>
-              </Card>
+              <CardDraw onGameResult={addGameResult} />
             </TabsContent>
           </Tabs>
         </div>
