@@ -1,13 +1,15 @@
 import { useEffect, useRef } from "react";
+import { Clock } from "lucide-react";
 
 interface AviatorDisplayProps {
   multiplier: number;
   isActive: boolean;
   crashed: boolean;
   nextRoundIn: number;
+  showNextRoundTimer: boolean;
 }
 
-export default function AviatorDisplay({ multiplier, isActive, crashed, nextRoundIn }: AviatorDisplayProps) {
+export default function AviatorDisplay({ multiplier, isActive, crashed, nextRoundIn, showNextRoundTimer }: AviatorDisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -79,30 +81,26 @@ export default function AviatorDisplay({ multiplier, isActive, crashed, nextRoun
   }, [multiplier, isActive, crashed, nextRoundIn]);
 
   return (
-    <div className="relative h-96 glass-morphism rounded-2xl overflow-hidden">
+    <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-lg overflow-hidden">
       <canvas
         ref={canvasRef}
-        className="w-full h-full"
-        style={{ display: "block" }}
+        className="absolute inset-0 w-full h-full"
       />
-      
-      {/* Overlay UI */}
+      {showNextRoundTimer && nextRoundIn > 0 && (
+        <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-full px-4 py-2 flex items-center">
+          <Clock className="w-5 h-5 text-gold mr-2" />
+          <span className="text-white font-bold">Next round in {nextRoundIn}s</span>
+        </div>
+      )}
+      {/* Current Multiplier Display */}
       <div className="absolute top-4 left-4 glass-morphism px-4 py-2 rounded-lg">
         <div className="flex items-center space-x-2">
-          <div className={`w-2 h-2 rounded-full ${isActive ? "bg-accent-green live-pulse" : "bg-gray-500"}`}></div>
-          <span className="text-sm text-white">
-            {isActive ? "Flying" : crashed ? "Crashed" : "Waiting"}
+          <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-accent-green animate-pulse' : 'bg-gray-500'}`}></div>
+          <span className="text-white font-bold text-lg">
+            {isActive && !crashed ? multiplier.toFixed(2) : '0.00'}x
           </span>
         </div>
       </div>
-
-      {isActive && !crashed && (
-        <div className="absolute top-4 right-4 glass-morphism px-4 py-2 rounded-lg">
-          <div className="text-accent-green font-bold text-2xl multiplier-display">
-            {multiplier.toFixed(2)}x
-          </div>
-        </div>
-      )}
     </div>
   );
 }

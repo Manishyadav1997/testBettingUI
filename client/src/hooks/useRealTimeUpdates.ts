@@ -9,7 +9,7 @@ export function useRealTimeUpdates() {
     multiplier: 1.0,
     timeElapsed: 0,
     crashed: false,
-    nextRoundIn: 45,
+    nextRoundIn: 90,
     crashPoint: 2.0, // Default value
     startTime: Date.now(),
     speed: 1.0,

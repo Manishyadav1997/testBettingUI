@@ -98,46 +98,17 @@ export default function AviatorGame() {
             isActive={aviatorState.isActive}
             crashed={aviatorState.crashed}
             nextRoundIn={aviatorState.nextRoundIn}
+            showNextRoundTimer={!aviatorState.isActive}
           />
-
-          {/* Game Stats */}
-          <div className="grid grid-cols-3 gap-4 mt-6">
-            <Card className="glass-morphism">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-accent-green mb-1">
-                  {aviatorState.multiplier.toFixed(2)}x
-                </div>
-                <div className="text-sm text-gray-400">Current Multiplier</div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-morphism">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-white mb-1">
-                  {players.length}
-                </div>
-                <div className="text-sm text-gray-400">Active Players</div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-morphism">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-gold mb-1">
-                  {aviatorState.nextRoundIn > 0 ? aviatorState.nextRoundIn : "0"}s
-                </div>
-                <div className="text-sm text-gray-400">Next Round</div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
 
         {/* Betting Panel */}
         <div className="space-y-6">
           {/* Bet Controls */}
           <Card className="glass-morphism">
-            <CardHeader>
+            {/* <CardHeader>
               <CardTitle className="text-white">Place Your Bet</CardTitle>
-            </CardHeader>
+            </CardHeader> */}
             <CardContent className="space-y-4">
               <div>
                 <label className="text-sm text-gray-400 mb-2 block">Bet Amount</label>
