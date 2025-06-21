@@ -6,6 +6,7 @@ interface AppContextType {
   setUser: (user: User | null) => void;
   balance: number;
   setBalance: (balance: number) => void;
+  updateBalance: (amount: number) => void;
   isAuthenticated: boolean;
   theme: "light" | "dark";
   toggleTheme: () => void;
@@ -24,6 +25,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success");
 
   const isAuthenticated = !!user;
+
+  const updateBalance = (amount: number) => {
+    setBalance(prev => Math.max(0, prev + amount));
+  };
 
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
@@ -60,7 +65,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       username: "BetMaster",
       email: "user@betpro.com",
       password: "",
-      phone: "+91 98765 43210",
+      phone: "+91 8397 xxxxxx",
       balance: "12450.00",
       isVerified: true,
       createdAt: new Date(),
@@ -75,6 +80,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setUser,
         balance,
         setBalance,
+        updateBalance,
         isAuthenticated,
         theme,
         toggleTheme,

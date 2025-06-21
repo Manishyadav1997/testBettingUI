@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile Navigation Spacing */
+@layer base {
+  html {
+    /* Add padding to prevent content from being hidden behind the fixed mobile nav */
+    @apply pb-16 md:pb-0;
+  }
+  
+  /* Smooth scrolling for better mobile experience */
+  html {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* Prevent horizontal scroll */
+  body {
+    @apply overflow-x-hidden;
+  }
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);

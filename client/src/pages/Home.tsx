@@ -20,24 +20,25 @@ export default function Home() {
   };
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-20">
+    <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 pb-20 sm:pb-24">
       {/* Hero Banner */}
       <section className="mb-8">
         <div 
-          className="relative h-64 rounded-2xl overflow-hidden"
+          className="relative h-48 sm:h-56 md:h-64 rounded-xl sm:rounded-2xl overflow-hidden"
           style={{
             backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=600')`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center'
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed'
           }}
         >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <h1 className="text-4xl md:text-6xl font-bold mb-4">Win Big Today</h1>
-              <p className="text-xl text-gray-200 mb-6">Premium betting experience with live odds</p>
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="text-center w-full max-w-md">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3 md:mb-4">Win Big Today</h1>
+              <p className="text-base sm:text-lg md:text-xl text-gray-200 mb-4 sm:mb-5 md:mb-6">Premium betting experience with live odds</p>
               <Link href="/cricket">
-                <Button className="gradient-accent text-primary-dark px-8 py-3 text-lg font-semibold hover:opacity-90">
-                  Start Betting <ArrowRight className="ml-2 w-5 h-5" />
+                <Button className="gradient-accent text-primary-dark px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg font-semibold hover:opacity-90 w-full sm:w-auto">
+                  Start Betting <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               </Link>
             </div>
@@ -46,12 +47,12 @@ export default function Home() {
       </section>
 
       {/* Featured Games */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <Flame className="text-danger-red mr-3 w-6 h-6" />
+      <section className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center">
+          <Flame className="text-danger-red mr-2 sm:mr-3 w-5 h-5 sm:w-6 sm:h-6" />
           Featured Games
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
           {/* Cricket Betting Card */}
           <Card className="glass-morphism bet-card cursor-pointer group">
             <CardContent className="p-6">
@@ -156,47 +157,47 @@ export default function Home() {
       </section>
 
       {/* Live Matches */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <Radio className="text-accent-green mr-3 w-6 h-6" />
+      <section className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center">
+          <Radio className="text-accent-green mr-2 sm:mr-3 w-5 h-5 sm:w-6 sm:h-6" />
           Live Matches
         </h2>
         <div className="space-y-4">
           {matches.filter(match => match.status === "live").map((match) => (
             <Card key={match.id} className="glass-morphism">
               <CardContent className="p-4">
-                <div className="flex flex-col md:flex-row md:items-center justify-between">
-                  <div className="flex items-center space-x-4 mb-4 md:mb-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center space-x-3 sm:space-x-4">
                     <img 
                       src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=60" 
                       alt="Cricket stadium" 
-                      className="w-16 h-10 object-cover rounded"
+                      className="w-12 h-8 sm:w-14 sm:h-9 md:w-16 md:h-10 object-cover rounded"
                     />
-                    <div>
-                      <h3 className="font-semibold">{match.team1} vs {match.team2}</h3>
-                      <p className="text-sm text-gray-300">
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-sm sm:text-base truncate">{match.team1} vs {match.team2}</h3>
+                      <p className="text-xs sm:text-sm text-gray-300">
                         Over {match.score.overs} • {match.team1.split(" ")[0]} {match.score.team1Score}
                       </p>
                     </div>
                   </div>
-                  <div className="flex space-x-3">
+                  <div className="flex space-x-2 sm:space-x-3 flex-wrap gap-2">
                     <Button 
                       variant="secondary"
                       className="bg-secondary-dark hover:bg-gray-600 text-sm"
                       onClick={() => handleAddBet("cricket", "match_winner", `${match.team1} Win`, match.odds.team1Win, `${match.team1} vs ${match.team2}`)}
                     >
-                      {match.team1.split(" ")[0]} Win <span className="text-accent-green ml-1">{match.odds.team1Win.toFixed(2)}</span>
+                      <span className="truncate max-w-[60px] sm:max-w-none">{match.team1.split(" ")[0]}</span> <span className="text-accent-green ml-0.5">{match.odds.team1Win.toFixed(2)}</span>
                     </Button>
                     <Button 
                       variant="secondary"
-                      className="bg-secondary-dark hover:bg-gray-600 text-sm"
+                      className="bg-secondary-dark hover:bg-gray-600 text-xs sm:text-sm px-2 sm:px-3"
                       onClick={() => handleAddBet("cricket", "match_winner", `${match.team2} Win`, match.odds.team2Win, `${match.team1} vs ${match.team2}`)}
                     >
-                      {match.team2.split(" ")[0]} Win <span className="text-accent-green ml-1">{match.odds.team2Win.toFixed(2)}</span>
+                      <span className="truncate max-w-[60px] sm:max-w-none">{match.team2.split(" ")[0]}</span> <span className="text-accent-green ml-0.5">{match.odds.team2Win.toFixed(2)}</span>
                     </Button>
-                    <Link href="/cricket">
-                      <Button className="gradient-accent text-primary-dark text-sm font-medium hover:opacity-90">
-                        More Bets
+                    <Link href="/cricket" className="w-full sm:w-auto">
+                      <Button className="gradient-accent text-primary-dark text-xs sm:text-sm font-medium hover:opacity-90 w-full">
+                        More
                       </Button>
                     </Link>
                   </div>
@@ -208,12 +209,12 @@ export default function Home() {
       </section>
 
       {/* Mini Games */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <span className="text-gold mr-3">🎮</span>
+      <section className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center">
+          <span className="text-gold mr-2 sm:mr-3">🎮</span>
           Mini Games
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {[
             { emoji: "🎲", name: "Dice Roll", link: "/mini-games" },
             { emoji: "🎯", name: "Spin Wheel", link: "/mini-games", animate: "animate-spin-slow" },
@@ -236,9 +237,9 @@ export default function Home() {
       </section>
 
       {/* Today's Winners */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <Trophy className="text-gold mr-3 w-6 h-6" />
+      <section className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center">
+          <Trophy className="text-gold mr-2 sm:mr-3 w-5 h-5 sm:w-6 sm:h-6" />
           Today's Winners
         </h2>
         <Card className="glass-morphism">
@@ -268,12 +269,12 @@ export default function Home() {
       </section>
 
       {/* Promotions */}
-      <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center">
-          <Gift className="text-gold mr-3 w-6 h-6" />
+      <section className="mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center">
+          <Gift className="text-gold mr-2 sm:mr-3 w-5 h-5 sm:w-6 sm:h-6" />
           Active Promotions
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
           {mockPromotions.slice(0, 2).map((promo) => (
             <Card key={promo.id} className={`${promo.type === "welcome" ? "gradient-gold" : "gradient-accent"} text-primary-dark`}>
               <CardContent className="p-6">
