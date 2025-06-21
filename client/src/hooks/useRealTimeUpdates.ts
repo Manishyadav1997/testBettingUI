@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { LiveMatch, AviatorGameState, ColorGameState } from "@/types";
 import { mockMatches } from "@/utils/mockData";
 
@@ -9,17 +9,19 @@ export function useRealTimeUpdates() {
     multiplier: 1.0,
     timeElapsed: 0,
     crashed: false,
-    nextRoundIn: 90,
+    nextRoundIn: 90, // Initial countdown set to 90 seconds
     crashPoint: 2.0, // Default value
     startTime: Date.now(),
     speed: 1.0,
     activePlayers: [],
   });
   const [colorGameState, setColorGameState] = useState<ColorGameState>({
-    countdown: 45,
+    countdown: 60, // Start with a full 60-second countdown
     isActive: true,
     currentRound: 1235,
     history: [],
+    isDrawing: false,
+    currentResult: null,
   });
 
   // Update cricket odds
@@ -78,7 +80,7 @@ export function useRealTimeUpdates() {
             multiplier: prev.crashPoint,
             crashed: true,
             isActive: false,
-            nextRoundIn: Math.floor(Math.random() * 20) + 30,
+            nextRoundIn: 90, // Set consistent 90-second countdown for next round
             finalMultiplier: prev.crashPoint,
             timeElapsed: actualTimeElapsed,
           };
@@ -127,26 +129,49 @@ export function useRealTimeUpdates() {
     }
   }
 
+  // Track the last update time for the drawing phase
+  const lastUpdateTime = useRef<number>(Date.now());
+
   // Update color game countdown
   const updateColorGame = useCallback(() => {
     setColorGameState(prev => {
-      if (prev.countdown > 0) {
-        return { ...prev, countdown: prev.countdown - 1 };
+      const now = Date.now();
+      
+      // If we're in drawing state, start a new round after 4 seconds
+      if (prev.isDrawing) {
+        if (now - lastUpdateTime.current >= 4000) {
+          lastUpdateTime.current = now;
+          return {
+            ...prev,
+            countdown: 60,
+            isDrawing: false,
+            currentResult: null,
+            currentRound: prev.currentRound + 1,
+            history: [
+              { result: prev.currentResult || 'red', timestamp: now, round: prev.currentRound },
+              ...prev.history.slice(0, 9), // Keep last 10 results
+            ],
+          };
+        }
+        return prev;
       }
       
-      // New round starts
-      const results = ["red", "green", "violet"] as const;
-      const result = results[Math.floor(Math.random() * 3)];
+      // If countdown reaches 0, switch to drawing state
+      if (prev.countdown <= 0 && !prev.isDrawing) {
+        const results = ["red", "green", "violet"] as const;
+        const result = results[Math.floor(Math.random() * 3)];
+        lastUpdateTime.current = now;
+        
+        return {
+          ...prev,
+          countdown: 0,
+          isDrawing: true,
+          currentResult: result,
+        };
+      }
       
-      return {
-        ...prev,
-        countdown: 60,
-        currentRound: prev.currentRound + 1,
-        history: [
-          { result, timestamp: Date.now(), round: prev.currentRound },
-          ...prev.history.slice(0, 9), // Keep last 10 results
-        ],
-      };
+      // Normal countdown
+      return { ...prev, countdown: prev.countdown - 1 };
     });
   }, []);
 
@@ -154,6 +179,9 @@ export function useRealTimeUpdates() {
     const cricketInterval = setInterval(updateCricketOdds, 3000);
     const aviatorInterval = setInterval(updateAviator, 100);
     const colorGameInterval = setInterval(updateColorGame, 1000);
+    
+    // Initial call to ensure smooth start
+    updateColorGame();
 
     return () => {
       clearInterval(cricketInterval);

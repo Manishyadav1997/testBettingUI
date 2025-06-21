@@ -127,27 +127,14 @@ export default function Home() {
                 className="w-full h-32 object-cover rounded-lg mb-4"
               />
               <div className="text-center">
-                <div className="text-2xl font-bold text-accent-green mb-2">00:45</div>
+                <div className="text-2xl font-bold text-accent-green mb-2">00:60</div>
                 <div className="text-sm text-gray-300 mb-4">Next Round</div>
-                <div className="grid grid-cols-3 gap-2">
-                  <Button 
-                    onClick={() => handleAddBet("color", "color", "Red", 2.0)}
-                    className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium"
-                  >
-                    Red
-                  </Button>
-                  <Button 
-                    onClick={() => handleAddBet("color", "color", "Green", 2.0)}
-                    className="bg-green-500 hover:bg-green-600 text-white text-sm font-medium"
-                  >
-                    Green
-                  </Button>
-                  <Button 
-                    onClick={() => handleAddBet("color", "color", "Violet", 4.5)}
-                    className="bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium"
-                  >
-                    Violet
-                  </Button>
+                <div className="flex space-x-2">
+                  <Link href="/color-game" className="flex-1">
+                    <Button className="w-full gradient-accent text-primary-dark font-medium">
+                      Play
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CardContent>

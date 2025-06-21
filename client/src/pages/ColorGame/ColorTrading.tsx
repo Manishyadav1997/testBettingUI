@@ -10,13 +10,14 @@ import { useBetSlip } from "@/contexts/BetSlipContext";
 import ColorBetCard from "@/components/ColorGame/ColorBetCard";
 
 interface ColorBet {
+  id: number;
   color: "red" | "green" | "violet";
   amount: number;
 }
 
 export default function ColorTrading() {
   const { colorGameState } = useRealTimeUpdates();
-  const { showToast, balance, setBalance } = useApp();
+  const { showToast, balance, updateBalance } = useApp();
   const { addBet } = useBetSlip();
   const [betAmount, setBetAmount] = useState<number>(100);
   const [activeBets, setActiveBets] = useState<ColorBet[]>([]);
@@ -65,18 +66,27 @@ export default function ColorTrading() {
         )
       );
     } else {
-      setActiveBets(prev => [...prev, { color, amount: betAmount }]);
+      setActiveBets(prev => [...prev, { color, amount: betAmount, id: Date.now() }]);
     }
 
-    setBalance(balance - betAmount);
-    addBet({
-      gameType: "color",
-      betType: "color",
-      selection: color.charAt(0).toUpperCase() + color.slice(1),
-      odds: colorOdds[color],
-    });
+    updateBalance(-betAmount);
+    // addBet({
+    //   gameType: "color",
+    //   betType: "color",
+    //   selection: color.charAt(0).toUpperCase() + color.slice(1),
+    //   odds: colorOdds[color],
+    // });
     
     showToast(`₹${betAmount} bet placed on ${color}`, "success");
+  };
+
+  const handleRemoveBet = (betId: number) => {
+    const betToRemove = activeBets.find(bet => bet.id === betId);
+    if (betToRemove) {
+      setActiveBets(prev => prev.filter(bet => bet.id !== betId));
+      updateBalance(betToRemove.amount);
+      showToast(`Bet of ₹${betToRemove.amount} removed`, "info");
+    }
   };
 
   // Simulate game result when countdown reaches 0
@@ -135,58 +145,117 @@ export default function ColorTrading() {
             <CardContent className="p-6">
               <div className="text-center">
                 <div className="flex items-center justify-center space-x-4 mb-4">
-                  <Clock className="w-6 h-6 text-accent-green" />
+                  <Clock className={`w-6 h-6 ${colorGameState.isDrawing ? 'text-yellow-500' : 'text-accent-green'}`} />
                   <span className="text-lg text-gray-400">Round #{colorGameState.currentRound}</span>
                 </div>
                 
-                <div className="text-6xl font-bold text-accent-green mb-2">
-                  {colorGameState.countdown.toString().padStart(2, "0")}
-                </div>
-                
-                <div className="text-gray-400">
-                  {colorGameState.countdown > 10 ? "Place your bets" : "Betting closed"}
-                </div>
-                
-                {colorGameState.countdown === 0 && (
-                  <div className="mt-4">
-                    <Badge className="bg-gold text-primary-dark text-lg px-4 py-2">
-                      Drawing Result...
-                    </Badge>
+                {colorGameState.isDrawing ? (
+                  <div className="space-y-4">
+                    <div className="text-4xl font-bold text-yellow-500 mb-2 py-2">
+                      The winner is...
+                    </div>
+                    {colorGameState.currentResult && (
+                      <div className={`text-5xl font-extrabold ${
+                        colorGameState.currentResult === 'red' ? 'text-red-500' :
+                        colorGameState.currentResult === 'green' ? 'text-green-500' : 'text-purple-500'
+                      }`}>
+                        {colorGameState.currentResult.toUpperCase()}
+                      </div>
+                    )}
                   </div>
+                ) : (
+                  <>
+                    <div className="text-6xl font-bold text-accent-green mb-2">
+                      {colorGameState.countdown.toString().padStart(2, "0")}
+                    </div>
+                    <div className="text-gray-400">
+                      {colorGameState.countdown > 10 ? "Place your bets" : "Betting closed"}
+                    </div>
+                  </>
                 )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Color Betting Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <ColorBetCard
-              color="red"
-              odds={colorOdds.red}
-              onBet={() => handleColorBet("red")}
-              betAmount={betAmount}
-              activeBet={activeBets.find(bet => bet.color === "red")?.amount || 0}
-              disabled={colorGameState.countdown < 10}
-            />
-            
-            <ColorBetCard
-              color="green"
-              odds={colorOdds.green}
-              onBet={() => handleColorBet("green")}
-              betAmount={betAmount}
-              activeBet={activeBets.find(bet => bet.color === "green")?.amount || 0}
-              disabled={colorGameState.countdown < 10}
-            />
-            
-            <ColorBetCard
-              color="violet"
-              odds={colorOdds.violet}
-              onBet={() => handleColorBet("violet")}
-              betAmount={betAmount}
-              activeBet={activeBets.find(bet => bet.color === "violet")?.amount || 0}
-              disabled={colorGameState.countdown < 10}
-            />
+          {/* Color Betting Area */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {Object.entries(colorOdds).map(([color, multiplier]) => {
+                const activeBet = activeBets.find(bet => bet.color === color)?.amount || 0;
+                const colorClasses = {
+                  red: 'bg-red-500 hover:bg-red-600',
+                  green: 'bg-green-500 hover:bg-green-600',
+                  violet: 'bg-purple-500 hover:bg-purple-600'
+                };
+                
+                return (
+                  <div
+                    key={color}
+                    className={`${colorClasses[color as keyof typeof colorClasses]} rounded-xl p-6 cursor-pointer transform transition-all duration-200 hover:scale-105 ${
+                      colorGameState.countdown < 10 ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-2xl'
+                    }`}
+                    onClick={() => colorGameState.countdown >= 10 && handleColorBet(color as "red" | "green" | "violet")}
+                  >
+                    <div className="text-center">
+                      <div className="text-2xl font-bold mb-2 capitalize">{color}</div>
+                      <div className="text-lg mb-2">{multiplier}x</div>
+                      {activeBet > 0 && (
+                        <div className="bg-white/20 rounded-lg p-2 mt-3">
+                          <div className="text-sm">Your Bet</div>
+                          <div className="font-bold">₹{activeBet.toLocaleString()}</div>
+                          <div className="text-xs">Win: ₹{(activeBet * multiplier).toLocaleString()}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
+  {/* Active Bets Summary */}
+  {activeBets.length > 0 && (
+            <Card className="glass-morphism">
+              <CardHeader>
+                <CardTitle className="text-white">Your Bets</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {activeBets.map((bet) => (
+                  <div key={bet.id} className="group relative flex justify-between items-center p-2 bg-secondary-dark rounded-lg hover:bg-secondary-dark/80 transition-colors">
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-4 h-4 rounded-full ${getColorClass(bet.color)}`}></div>
+                      <span className="text-white capitalize">{bet.color}</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <div className="text-white font-semibold">₹{bet.amount}</div>
+                        <div className="text-accent-green text-sm">
+                          Win: ₹{(bet.amount * colorOdds[bet.color]).toFixed(2)}
+                        </div>
+                      </div>
+                      <button 
+                          onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveBet(bet.id);
+                        }}
+                        className="text-red-400 hover:text-red-300 p-1 rounded-full hover:bg-red-500/20 transition-colors"
+                        title="Remove bet"
+                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a1 1 0 001-1V5a1 1 0 00-1-1h-3.382a1 1 0 00-.894-.553h-2.448a1 1 0 00-.894.553H7a1 1 0 00-1 1v1a1 1 0 001 1z" />
+                        </svg>
+                      </button>
+
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="border-t border-gray-600 pt-3 flex justify-between">
+                  <span className="text-gray-400">Total Bet:</span>
+                  <span className="text-white font-semibold">₹{getTotalBetAmount()}</span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Game History */}
           <Card className="glass-morphism">
@@ -265,64 +334,16 @@ export default function ColorTrading() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Active Bets Summary */}
-          {activeBets.length > 0 && (
-            <Card className="glass-morphism">
-              <CardHeader>
-                <CardTitle className="text-white">Your Bets</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {activeBets.map((bet) => (
-                  <div key={bet.color} className="flex justify-between items-center p-2 bg-secondary-dark rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <div className={`w-4 h-4 rounded-full ${getColorClass(bet.color)}`}></div>
-                      <span className="text-white capitalize">{bet.color}</span>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-white font-semibold">₹{bet.amount}</div>
-                      <div className="text-accent-green text-sm">
-                        Win: ₹{(bet.amount * colorOdds[bet.color]).toFixed(2)}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                
-                <div className="border-t border-gray-600 pt-3 flex justify-between">
-                  <span className="text-gray-400">Total Bet:</span>
-                  <span className="text-white font-semibold">₹{getTotalBetAmount()}</span>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Statistics */}
-          <Card className="glass-morphism">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center">
-                <TrendingUp className="w-5 h-5 mr-2" />
-                Statistics
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-400">Today's Games:</span>
-                <span className="text-white">147</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Your Wins:</span>
-                <span className="text-accent-green">23</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Win Rate:</span>
-                <span className="text-white">68%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Total Profit:</span>
-                <span className="text-gold">₹12,450</span>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Tips */}
+          <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 backdrop-blur-md rounded-xl p-6">
+            <h3 className="text-yellow-400 font-semibold mb-3">💡 Pro Tips</h3>
+            <ul className="text-gray-300 text-sm space-y-2">
+              <li>• Violet has higher payout (4.5x) but lower probability</li>
+              <li>• Red and Green have 2x payout with better odds</li>
+              <li>• Manage your bankroll wisely</li>
+              <li>• Study the pattern in recent results</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
