@@ -272,7 +272,14 @@ export default function DiceGame({ onGameResult }: DiceGameProps) {
                   </div>
                 </div>
               )}
-
+              {/* Roll Button */}
+              <button
+                onClick={rollDice}
+                disabled={isRolling || autoPlay}
+                className="w-full gradient-accent text-primary-dark font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50"
+              >
+                {isRolling ? "Rolling..." : autoPlay ? "Auto Playing..." : "Roll Dice"}
+              </button>
               {/* Bet Amount */}
               <div className="mb-6">
                 <label className="text-sm text-gray-400 mb-2 block">Bet Amount:</label>
@@ -393,15 +400,6 @@ export default function DiceGame({ onGameResult }: DiceGameProps) {
                   </span>
                 </div>
               </div>
-
-              {/* Roll Button */}
-              <button
-                onClick={rollDice}
-                disabled={isRolling || autoPlay}
-                className="w-full gradient-accent text-primary-dark font-semibold py-3 rounded-xl hover:opacity-90 disabled:opacity-50"
-              >
-                {isRolling ? "Rolling..." : autoPlay ? "Auto Playing..." : "Roll Dice"}
-              </button>
             </div>
           </div>
 

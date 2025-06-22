@@ -46,6 +46,8 @@ export interface ColorGameState {
   isActive: boolean;
   currentRound: number;
   history: ColorGameResult[];
+  isDrawing: boolean;
+  currentResult: "red" | "green" | "violet" | null;
 }
 
 export interface MiniGameResult {
